@@ -3,7 +3,6 @@ package com.study.connection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class MyConnection {
 
@@ -14,10 +13,9 @@ public class MyConnection {
     public Connection getConnection() {
 
         Connection conn = null;
-        Statement stmt = null;
 
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(DB_URL, ID, PASSWORD);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
