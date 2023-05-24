@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet("/*")
+@WebServlet("/**")
 public class MyServlet extends HttpServlet {
 
     private final Map<String, String> map = new HashMap<>();
@@ -23,4 +23,6 @@ public class MyServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.service(req, resp);
     }
+
+
 }

@@ -1,16 +1,19 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: jh
-  Date: 2023/05/24
-  Time: 11:35 AM
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>$Title$</title>
-  </head>
-  <body>
-  $END$
-  </body>
+<head>
+  <title>Main Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+<div>
+  This is Main Page.
+</div>
+
+
+<script type="text/javascript">
+</script>
+
+</body>
 </html>
