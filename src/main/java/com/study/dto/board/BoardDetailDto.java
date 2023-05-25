@@ -1,6 +1,5 @@
 package com.study.dto.board;
 
-import com.study.dto.FileDto;
 import com.study.dto.comment.CommentDto;
 import lombok.Getter;
 
@@ -18,7 +17,7 @@ public class BoardDetailDto {
     private final String content;
     private final String createdDate;
     private final String modifiedDate;
-    private List<FileDto> fileList = new ArrayList<>();
+    private List<String> fileList = new ArrayList<>();
     private List<CommentDto> comments = new ArrayList<>();
 
     public BoardDetailDto(Long id, String category, String title, int views, String content, String createdDate, String modifiedDate, String writer) {
@@ -32,7 +31,7 @@ public class BoardDetailDto {
         this.writer = writer;
     }
 
-    public void setFileList(List<FileDto> fileDtos) {
+    public void setFileList(List<String> fileDtos) {
         this.fileList = fileDtos;
     }
 

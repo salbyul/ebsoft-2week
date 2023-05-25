@@ -6,12 +6,14 @@ import java.util.*;
 public class WebUtil {
 
     private final List<String> parameters;
+    public final static String PATH = "/Users/jh/Desktop/Private/study/files";
+    public final static int MAX_SIZE = 1024 * 1024 * 5;
 
     public WebUtil() {
         List<String> parameters = new ArrayList<>();
 
         parameters.add("i");
-        parameters.add("p");
+        parameters.add("page");
         parameters.add("start_date");
         parameters.add("end_date");
         parameters.add("category");

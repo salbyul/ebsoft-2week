@@ -4,6 +4,8 @@ import com.study.connection.MyConnection;
 import com.study.dto.file.FileSaveDto;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileRepository {
 
@@ -74,4 +76,66 @@ public class FileRepository {
         }
         return result;
     }
+
+    public List<String> findFileNamesByBoardId(Long boardId) throws SQLException {
+        String sql = "select real_name from file where board_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<String> fileNames = new ArrayList<>();
+
+        try {
+            conn = connection.getConnection();
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, boardId);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                fileNames.add(rs.getString("real_name"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.close();
+            pstmt.close();
+            rs.close();
+        }
+        return fileNames;
+    }
+
+    public String findFileNameByRealName(String realName, Long boardId) throws SQLException {
+
+        String sql = "select name from file where real_name = ? and board_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String result = null;
+
+        try {
+
+            conn = connection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, realName);
+            pstmt.setLong(2, boardId);
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                result = rs.getString(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.close();
+            pstmt.close();
+            rs.close();
+        }
+        return result;
+    }
+
 }

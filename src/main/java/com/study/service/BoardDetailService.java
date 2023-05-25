@@ -2,6 +2,7 @@ package com.study.service;
 
 import com.study.dto.board.BoardDetailDto;
 import com.study.repository.CommentRepository;
+import com.study.repository.FileRepository;
 import com.study.util.WebUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -24,6 +26,7 @@ public class BoardDetailService implements BoardService{
         String nextPath;
         BoardDetailDto boardDetailDto = null;
         CommentRepository commentRepository = new CommentRepository();
+        FileRepository fileRepository = new FileRepository();
 
         long index = Long.parseLong(optionalIndex.orElse("0"));
 
@@ -38,6 +41,8 @@ public class BoardDetailService implements BoardService{
         try {
             boardDetailDto = boardRepository.findDetailByIndex(index);
             boardDetailDto.setComments(commentRepository.findAllByBoardId(index));
+            List<String> fileNames = fileRepository.findFileNamesByBoardId(index);
+            boardDetailDto.setFileList(fileNames);
             boardRepository.updateViews(boardDetailDto.getViews(), index);
         } catch (SQLException e) {
             e.printStackTrace();

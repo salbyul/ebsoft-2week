@@ -24,6 +24,7 @@ public class MyServlet extends HttpServlet {
         map.put("/detail", new BoardDetailService());
         map.put("/create", new BoardCreatePageService());
         map.put("/save", new BoardSaveService());
+        map.put("/download", new FileDownloadService());
         log.info("MyServlet INIT");
     }
 

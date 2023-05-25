@@ -19,13 +19,12 @@ import java.sql.SQLException;
 public class BoardSaveService implements BoardService{
 
 
+//    TODO 유효성 검사 필요
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info("BoardSaveService EXECUTE");
 
-        String PATH = "/Users/jh/Desktop/Private/study/files";
-        int MAX_SIZE = 1024 * 1024 * 5;
-        MultipartRequest multipartRequest = new MultipartRequest(request, PATH, MAX_SIZE, "utf-8", new DistinctPolicy());
+        MultipartRequest multipartRequest = new MultipartRequest(request, WebUtil.PATH, WebUtil.MAX_SIZE, "utf-8", new DistinctPolicy());
         WebUtil webUtil = new WebUtil();
 
         BoardSaveDto boardSaveDto = getBoardSaveDto(multipartRequest);

@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>Detail</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
@@ -13,12 +13,11 @@
 <%
     request.setCharacterEncoding("utf-8");
     String index = request.getParameter("i");
-    Optional<String> p = Optional.ofNullable(request.getParameter("p"));
+    Optional<String> p = Optional.ofNullable(request.getParameter("page"));
     Optional<String> startDate = Optional.ofNullable(request.getParameter("start_date"));
     Optional<String> endDate = Optional.ofNullable(request.getParameter("end_date"));
     Optional<String> category = Optional.ofNullable(request.getParameter("category"));
     Optional<String> search = Optional.ofNullable(request.getParameter("search"));
-    String offset = p.orElse("0");
 
     StringBuilder stringBuilder = new StringBuilder("/");
     boolean flag = false;
@@ -47,6 +46,14 @@
             stringBuilder.append("&search=").append(search.get());
         } else {
             stringBuilder.append("?search=").append(search.get());
+            flag = true;
+        }
+    }
+    if (p.isPresent()) {
+        if (flag) {
+            stringBuilder.append("&page=").append(p.get());
+        } else {
+            stringBuilder.append("?page=").append(p.get());
         }
     }
     String path = stringBuilder.toString();
@@ -91,7 +98,13 @@
         </div>
         <%--    file--%>
         <div>
-
+            <%
+                for (String s : detail.getFileList()) {
+            %>
+            <a href="download?name=<%=s%>&i=<%=index%>"><%=s%></a>
+            <%
+                }
+            %>
         </div>
     </div>
 
