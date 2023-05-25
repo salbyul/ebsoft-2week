@@ -14,8 +14,8 @@
     Optional<String> p = Optional.ofNullable(request.getParameter("page"));
     String offset = p.orElse("0");
 
-    Optional<String> startDate = Optional.ofNullable(request.getParameter("startDate"));
-    Optional<String> endDate = Optional.ofNullable(request.getParameter("endDate"));
+    Optional<String> startDate = Optional.ofNullable(request.getParameter("start_date"));
+    Optional<String> endDate = Optional.ofNullable(request.getParameter("end_date"));
     Optional<String> category = Optional.ofNullable(request.getParameter("category"));
     Optional<String> search = Optional.ofNullable(request.getParameter("search"));
 
@@ -24,15 +24,17 @@
     PagingDto pagingDto = boardListDto.getPagingDto();
     List<String> categories = (List<String>) request.getAttribute("categories");
 %>
-<%--TODO 이제 메인 페이지 표시 성공!!! 나머지 모두 해야 함--%>
+
 <div class="mx-auto mt-20 w-7/12">
     <%--    검색--%>
     <div class="border mb-5 text-center">
-        <form method="get" action="index.jsp">
+        <form method="get" action="">
             <div class="py-1">등록일
-                <input type="date" name="start_d" class="border mx-7" id="startDate" <% if (startDate.isPresent()) {%> value="<%=startDate.get()%>" <% }%>/> ~
-                <input type="date" name="end_d" class="border mx-7" id="endDate" <% if (endDate.isPresent()) {%> value="<%=endDate.get()%>" <% }%>/>
-                <select name="c" class="border p-1" id="category">
+                <input type="date" name="start_date" class="border mx-7" id="startDate" <% if (startDate.isPresent()) {%>
+                       value="<%=startDate.get()%>" <% }%>/> ~
+                <input type="date" name="end_date" class="border mx-7" id="endDate" <% if (endDate.isPresent()) {%>
+                       value="<%=endDate.get()%>" <% }%>/>
+                <select name="category" class="border p-1" id="category">
                     <option value="all">전체 카테고리</option>
                     <% for (int i = 0; i < categories.size(); i++) {
                     %>
@@ -73,13 +75,20 @@
                     <td class="py-1"><%=dto.getCategory()%>
                     </td>
                     <% if (dto.hasFile()) {%>
-                    <td>FILE</td>
+                    <td>O</td>
                     <% } else {%>
                     <td></td>
                     <% } %>
                     <td>
-                        <a href="detail.jsp?i=<%=dto.getId()%>&p=<%=offset%>"><%=dto.getTitle()%>
-                        </a></td>
+                        <%
+                            String path = "detail?i=" + dto.getId() + "&p=" + offset;
+                            if (startDate.isPresent()) path += "&start_date=" + startDate.get();
+                            if (endDate.isPresent()) path += "&end_date=" + endDate.get();
+                            if (category.isPresent()) path += "&category=" + category.get();
+                            if (search.isPresent()) path += "&search=" + search.get();
+                            %>
+                        <a href="<%=path%>"><%=dto.getTitle()%></a>
+                    </td>
                     <td><%=dto.getWriter()%>
                     </td>
                     <td><%=dto.getViews()%>
@@ -125,12 +134,11 @@
                 class="px-5 bg-gray-200 rounded-sm duration-300 hover:duration-300 hover:bg-gray-300">등록
         </button>
     </div>
-
 </div>
 
 <script type="text/javascript">
     const create = () => {
-        window.location.href = "create.jsp"
+        window.location.href = 'create';
     }
 </script>
 

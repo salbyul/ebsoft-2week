@@ -11,13 +11,8 @@ public class IndexValidator {
     private final List<String> categories;
 
     private IndexValidator(IndexValidatorBuilder builder) {
-        int offset = builder.offset;
-        String startDate = builder.startDate;
-        String endDate = builder.endDate;
-        String category = builder.category;
-        String search = builder.search;
         this.categories = builder.categories;
-        this.searchDto = new SearchDto(offset, validateDate(startDate), validateDate(endDate), validateCategory(category), validateSearch(search));
+        this.searchDto = new SearchDto(builder.offset, validateDate(builder.startDate), validateDate(builder.endDate), validateCategory(builder.category), validateSearch(builder.search));
     }
 
     public SearchDto getSearchDto() {

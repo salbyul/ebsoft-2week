@@ -1,7 +1,6 @@
 package com.study.servlet;
 
-import com.study.service.BoardListService;
-import com.study.service.Service;
+import com.study.service.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletException;
@@ -22,6 +21,9 @@ public class MyServlet extends HttpServlet {
     @Override
     public void init() {
         map.put("/", new BoardListService());
+        map.put("/detail", new BoardDetailService());
+        map.put("/create", new BoardCreatePageService());
+        map.put("/save", new BoardSaveService());
         log.info("MyServlet INIT");
     }
 

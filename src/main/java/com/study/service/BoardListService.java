@@ -4,7 +4,7 @@ import com.study.dto.SearchDto;
 import com.study.dto.board.BoardListDto;
 import com.study.dto.board.BoardSearchDto;
 import com.study.dto.board.PagingDto;
-import com.study.repository.BoardRepository;
+import com.study.util.WebUtil;
 import com.study.validator.IndexValidator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class BoardListService implements Service {
-
-    private final BoardRepository boardRepository = new BoardRepository();
+public class BoardListService implements BoardService {
 
 //    TODO 코드 깨끗하게!
     @Override
@@ -31,8 +29,8 @@ public class BoardListService implements Service {
         List<String> categories = new ArrayList<>();
 
         Optional<String> offset = Optional.ofNullable(request.getParameter("offset"));
-        Optional<String> startDate = Optional.ofNullable(request.getParameter("startDate"));
-        Optional<String> endDate = Optional.ofNullable(request.getParameter("endDate"));
+        Optional<String> startDate = Optional.ofNullable(request.getParameter("start_date"));
+        Optional<String> endDate = Optional.ofNullable(request.getParameter("end_date"));
         Optional<String> category = Optional.ofNullable(request.getParameter("category"));
         Optional<String> search = Optional.ofNullable(request.getParameter("search"));
 
@@ -49,6 +47,7 @@ public class BoardListService implements Service {
             e.printStackTrace();
         }
         SearchDto searchDto = indexValidator.getSearchDto();
+        System.out.println("searchDto = " + searchDto);
         request.setAttribute("categories", categories);
 
         try {
@@ -61,6 +60,9 @@ public class BoardListService implements Service {
             e.printStackTrace();
         }
 
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        WebUtil webUtil = new WebUtil();
+        String nextPath = webUtil.assembleNextPath(request, "index.jsp");
+
+        request.getRequestDispatcher(nextPath).forward(request, response);
     }
 }
