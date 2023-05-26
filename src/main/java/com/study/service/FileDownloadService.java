@@ -10,13 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
 public class FileDownloadService implements Service{
 
     private final FileRepository fileRepository = new FileRepository();
 
-//    TODO 원래 파일 이름으로 변경해야함
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -41,9 +42,9 @@ public class FileDownloadService implements Service{
             String strClient = request.getHeader("user-agent");
 
             if (strClient.contains("MSIE 5.5")) {
-                response.setHeader("Content-Disposition", "fileName=" + fileName + ";");
+                response.setHeader("Content-Disposition", "fileName=" + URLEncoder.encode(realName, StandardCharsets.UTF_8) + ";");
             } else {
-                response.setHeader("Content-Disposition", "attachment; fileName=" + fileName + ";");
+                response.setHeader("Content-Disposition", "attachment; fileName=" + URLEncoder.encode(realName, StandardCharsets.UTF_8) + ";");
             }
 
             FileInputStream fileInputStream = new FileInputStream(file);

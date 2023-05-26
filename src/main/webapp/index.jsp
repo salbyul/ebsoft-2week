@@ -26,6 +26,7 @@
 %>
 
 <div class="mx-auto mt-20 w-7/12">
+
     <%--    검색--%>
     <div class="border mb-5 text-center">
         <form method="get" action="">
@@ -81,7 +82,7 @@
                     <% } %>
                     <td>
                         <%
-                            String path = "detail?i=" + dto.getId() + "&p=" + offset;
+                            String path = "/detail?i=" + dto.getId() + "&p=" + offset;
                             if (startDate.isPresent()) path += "&start_date=" + startDate.get();
                             if (endDate.isPresent()) path += "&end_date=" + endDate.get();
                             if (category.isPresent()) path += "&category=" + category.get();
@@ -138,7 +139,7 @@
 
 <script type="text/javascript">
     const create = () => {
-        window.location.href = 'create';
+        window.location.href = '/create';
     }
 </script>
 

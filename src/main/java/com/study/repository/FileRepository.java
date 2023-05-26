@@ -77,6 +77,12 @@ public class FileRepository {
         return result;
     }
 
+    /**
+     * board_id로 board에 있는 파일 이름들 리턴
+     * @param boardId
+     * @return
+     * @throws SQLException
+     */
     public List<String> findFileNamesByBoardId(Long boardId) throws SQLException {
         String sql = "select real_name from file where board_id = ?";
 
@@ -107,6 +113,13 @@ public class FileRepository {
         return fileNames;
     }
 
+    /**
+     * real_name으로 변환된 변환된 파일 이름 리턴
+     * @param realName
+     * @param boardId
+     * @return
+     * @throws SQLException
+     */
     public String findFileNameByRealName(String realName, Long boardId) throws SQLException {
 
         String sql = "select name from file where real_name = ? and board_id = ?";
@@ -136,6 +149,34 @@ public class FileRepository {
             rs.close();
         }
         return result;
+    }
+
+    /**
+     * 특정 board 레코드와 연결되어 있는 file 레코드들 중에 fileNames에 포함되어 있는 레코드 삭제
+     * @param boardId
+     * @param fileNames
+     */
+    public void deleteFiles(Long boardId, List<String> fileNames) throws SQLException {
+        for (String fileName : fileNames) {
+            String sql = "delete from file where board_id = ? and real_name = ?";
+
+            Connection conn = null;
+            PreparedStatement pstmt = null;
+
+            try {
+                conn = connection.getConnection();
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setLong(1, boardId);
+                pstmt.setString(2, fileName);
+
+                pstmt.executeUpdate();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                conn.close();
+                pstmt.close();
+            }
+        }
     }
 
 }

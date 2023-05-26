@@ -16,7 +16,7 @@
 
     <div>
         <%--        multipart/form-data로 변경해야 함--%>
-        <form method="post" action="save" onsubmit="return verify()" enctype="multipart/form-data">
+        <form method="post" action="/save" onsubmit="return verify()" enctype="multipart/form-data">
 
             <%--        카테고리--%>
             <div class="flex border-y">
@@ -42,10 +42,11 @@
                     작성자
                 </div>
                 <div class="py-1 w-9/12">
-                    <% if(request.getParameter("writer") == null) {%>
+                    <% if (request.getParameter("writer") == null) {%>
                     <input type="text" name="writer" class="border pl-1 ml-3 w-44" id="writer"/>
                     <% } else { %>
-                    <input type="text" name="writer" class="border pl-1 ml-3 w-44" id="writer" value="<%=request.getParameter("writer")%>"/>
+                    <input type="text" name="writer" class="border pl-1 ml-3 w-44" id="writer"
+                           value="<%=request.getParameter("writer")%>"/>
                     <% } %>
                 </div>
             </div>
@@ -71,7 +72,8 @@
                     <% if (request.getParameter("title") == null) {%>
                     <input type="text" name="title" class="border pl-1 ml-3 w-full" id="title"/>
                     <% } else { %>
-                    <input type="text" name="title" class="border pl-1 ml-3 w-full" id="title" value="<%=request.getParameter("title")%>"/>
+                    <input type="text" name="title" class="border pl-1 ml-3 w-full" id="title"
+                           value="<%=request.getParameter("title")%>"/>
                     <% } %>
                 </div>
             </div>
@@ -87,7 +89,8 @@
                     <% if (request.getParameter("content") == null) {%>
                     <textarea class="resize-none w-full border pl-1 ml-3 h-32" name="content" id="content"></textarea>
                     <% } else { %>
-                    <textarea class="resize-none w-full border pl-1 ml-3 h-32" name="content" id="content"><%=request.getParameter("content")%></textarea>
+                    <textarea class="resize-none w-full border pl-1 ml-3 h-32" name="content"
+                              id="content"><%=request.getParameter("content")%></textarea>
                     <% } %>
                 </div>
             </div>
@@ -105,21 +108,24 @@
                         <label for="fileOne">
                             <span class="border rounded-sm px-2">파일 찾기</span>
                         </label>
-                        <input type="file" class="pl-1 ml-3 w-full" id="fileOne" name="fileOne" hidden onchange="onFileChange(1)"/>
+                        <input type="file" class="pl-1 ml-3 w-full" id="fileOne" name="fileOne" hidden
+                               onchange="onFileChange(1)"/>
                     </div>
                     <div class="my-1">
                         <input type="text" class="border pl-1 ml-3 w-5/12 bg-white" disabled id="fileTwoName"/>
                         <label for="fileTwo">
                             <span class="border rounded-sm px-2">파일 찾기</span>
                         </label>
-                        <input type="file" class="pl-1 ml-3 w-full" id="fileTwo" name="fileTwo" hidden onchange="onFileChange(2)"/>
+                        <input type="file" class="pl-1 ml-3 w-full" id="fileTwo" name="fileTwo" hidden
+                               onchange="onFileChange(2)"/>
                     </div>
                     <div class="my-1">
                         <input type="text" class="border pl-1 ml-3 w-5/12 bg-white" disabled id="fileThreeName"/>
                         <label for="fileThree">
                             <span class="border rounded-sm px-2">파일 찾기</span>
                         </label>
-                        <input type="file" class="pl-1 ml-3 w-full" id="fileThree" name="fileThree" hidden onchange="onFileChange(3)"/>
+                        <input type="file" class="pl-1 ml-3 w-full" id="fileThree" name="fileThree" hidden
+                               onchange="onFileChange(3)"/>
                     </div>
                 </div>
             </div>

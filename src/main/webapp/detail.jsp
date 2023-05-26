@@ -11,58 +11,13 @@
 <body>
 
 <%
-    request.setCharacterEncoding("utf-8");
     String index = request.getParameter("i");
-    Optional<String> p = Optional.ofNullable(request.getParameter("page"));
-    Optional<String> startDate = Optional.ofNullable(request.getParameter("start_date"));
-    Optional<String> endDate = Optional.ofNullable(request.getParameter("end_date"));
-    Optional<String> category = Optional.ofNullable(request.getParameter("category"));
-    Optional<String> search = Optional.ofNullable(request.getParameter("search"));
-
-    StringBuilder stringBuilder = new StringBuilder("/");
-    boolean flag = false;
-    if (startDate.isPresent()) {
-        stringBuilder.append("?start_date=").append(startDate.get());
-        flag = true;
-    }
-    if (endDate.isPresent()) {
-        if (flag) {
-            stringBuilder.append("&end_date=").append(endDate.get());
-        } else {
-            stringBuilder.append("?end_date=").append(endDate.get());
-            flag = true;
-        }
-    }
-    if (category.isPresent()) {
-        if (flag) {
-            stringBuilder.append("&category=").append(category.get());
-        } else {
-            stringBuilder.append("?category=").append(category.get());
-            flag = true;
-        }
-    }
-    if (search.isPresent()) {
-        if (flag) {
-            stringBuilder.append("&search=").append(search.get());
-        } else {
-            stringBuilder.append("?search=").append(search.get());
-            flag = true;
-        }
-    }
-    if (p.isPresent()) {
-        if (flag) {
-            stringBuilder.append("&page=").append(p.get());
-        } else {
-            stringBuilder.append("?page=").append(p.get());
-        }
-    }
-    String path = stringBuilder.toString();
-
     BoardDetailDto detail = (BoardDetailDto) request.getAttribute("boardDetailDto");
 %>
 
 
 <div class="w-7/12 mx-auto mt-20 h-screen">
+
     <%--  제목--%>
     <div class="border-b-2 pb-3 mb-3">
         <div class="flex justify-between text-sm text-gray-600 mb-5">
@@ -101,7 +56,9 @@
             <%
                 for (String s : detail.getFileList()) {
             %>
-            <a href="download?name=<%=s%>&i=<%=index%>"><%=s%></a>
+            <a href="download?name=<%=s%>&i=<%=index%>"><%=s%>
+            </a>
+            <br/>
             <%
                 }
             %>
@@ -128,9 +85,7 @@
             <% } %>
         </div>
         <div>
-            <form method="post"
-                  action="comment_create.jsp?i=<%=index%>"
-                  onsubmit="return verifyComment()">
+            <form method="post" id="commentForm" onsubmit="return verifyComment()">
                 <div>
                     <div>
                         <input type="text" placeholder="작성자" class="border pl-1 mb-1" name="writer" id="writer"/>
@@ -144,15 +99,18 @@
         </div>
     </div>
     <div class="text-center mt-2">
-        <button class="px-3 py-1 border rounded-sm bg-gray-100" onclick="toList()">목록</button>
+        <button class="px-3 py-1 border rounded-sm bg-gray-100" onclick="window.location.href = assembleParameter('/')">
+            목록
+        </button>
         <button class="px-3 py-1 border rounded-sm" onclick="changeVisibilityPopup('modify')">수정</button>
         <button class="px-3 py-1 border rounded-sm" onclick="changeVisibilityPopup('delete')">삭제</button>
     </div>
 </div>
 
+<%--수정--%>
 <div class="border fixed z-10 w-3/12 text-center top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 shadow-md bg-gray-50 invisible"
      id="modify_popup">
-    <form method="post" action="modify_post.jsp?i=<%=request.getParameter("i")%>">
+    <form method="post" action="" id="modifiedForm">
         <h1 class="my-10">비밀번호 입력</h1>
         <input type="password" placeholder="비밀번호를 입력해 주세요." class="pl-1 border w-5/12" name="password"/>
         <br/>
@@ -163,9 +121,10 @@
     </form>
 </div>
 
+<%--삭제--%>
 <div class="border fixed z-10 w-3/12 text-center top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 shadow-md bg-gray-50 invisible"
      id="delete_popup">
-    <form method="post" action="delete_post.jsp?i=<%=request.getParameter("i")%>">
+    <form method="post" action="" id="deletedForm">
         <h1 class="my-10">비밀번호 입력</h1>
         <input type="password" placeholder="비밀번호를 입력해 주세요." class="pl-1 border w-5/12" name="password"/>
         <br/>
@@ -198,10 +157,18 @@
     }
 %>
 <script type="text/javascript">
+    window.onload = () => {
+        const modifiedForm = document.getElementById("modifiedForm");
+        modifiedForm.action = assembleParameterWithIndex("password/check") + '&btn=modify';
+        const commentSaveForm = document.getElementById("commentForm");
+        commentSaveForm.action = assembleParameterWithIndex("comment/save");
+        const deletedForm = document.getElementById("deletedForm");
+        deletedForm.action = assembleParameterWithIndex("password/check") + '&btn=delete';
+    }
     const verifyComment = () => {
         const writer = document.getElementById("writer");
         const content = document.getElementById("content");
-        if (writer.value === null || writer.value === undefined || writer.value < 3 || writer.value > 4) {
+        if (writer.value === null || writer.value === undefined || writer.value.length < 3 || writer.value.length > 4) {
             alert("작성자는 3글자 이상, 5글자 미만이어야 합니다.");
             return false;
         }
@@ -210,11 +177,6 @@
             return false;
         }
         return true;
-    }
-
-    const toList = () => {
-        console.log('<%=path%>');
-        window.location.href = '<%=path%>';
     }
 
     const changeVisibilityPopup = (btn) => {
@@ -241,6 +203,94 @@
         }
     }
 
+    const assembleParameter = (path) => {
+        const paramGetter = new URLSearchParams(location.search);
+        let flag = false;
+        if (paramGetter.has('page')) {
+            path = path + '?page=' + paramGetter.get('page');
+            flag = true;
+        }
+        if (paramGetter.has('start_date')) {
+            if (flag) {
+                path = path + '&start_date=' + paramGetter.get('start_date');
+            } else {
+                path = path + '?start_date=' + paramGetter.get('start_date');
+                flag = true;
+            }
+        }
+        if (paramGetter.has('end_date')) {
+            if (flag) {
+                path = path + '&end_date=' + paramGetter.get('end_date');
+            } else {
+                path = path + '?end_date=' + paramGetter.get('end_date');
+                flag = true;
+            }
+        }
+        if (paramGetter.has('category')) {
+            if (flag) {
+                path = path + '&category=' + paramGetter.get('category');
+            } else {
+                path = path + '?category=' + paramGetter.get('category');
+                flag = true;
+            }
+        }
+        if (paramGetter.has('search')) {
+            if (flag) {
+                path = path + '&search=' + paramGetter.get('search');
+            } else {
+                path = path + '?search=' + paramGetter.get('search');
+                flag = true;
+            }
+        }
+        return path;
+    }
+
+    const assembleParameterWithIndex = (path) => {
+        const paramGetter = new URLSearchParams(location.search);
+        let flag = false;
+        if (paramGetter.has('page')) {
+            path = path + '?page=' + paramGetter.get('page');
+            flag = true;
+        }
+        if (paramGetter.has('start_date')) {
+            if (flag) {
+                path = path + '&start_date=' + paramGetter.get('start_date');
+            } else {
+                path = path + '?start_date=' + paramGetter.get('start_date');
+                flag = true;
+            }
+        }
+        if (paramGetter.has('end_date')) {
+            if (flag) {
+                path = path + '&end_date=' + paramGetter.get('end_date');
+            } else {
+                path = path + '?end_date=' + paramGetter.get('end_date');
+                flag = true;
+            }
+        }
+        if (paramGetter.has('category')) {
+            if (flag) {
+                path = path + '&category=' + paramGetter.get('category');
+            } else {
+                path = path + '?category=' + paramGetter.get('category');
+                flag = true;
+            }
+        }
+        if (paramGetter.has('search')) {
+            if (flag) {
+                path = path + '&search=' + paramGetter.get('search');
+            } else {
+                path = path + '?search=' + paramGetter.get('search');
+                flag = true;
+            }
+        }
+        if (flag) {
+            path = path + '&i=' + paramGetter.get('i');
+        } else {
+            path = path + '?i=' + paramGetter.get('i');
+        }
+        return path;
+    }
 </script>
 
 </body>

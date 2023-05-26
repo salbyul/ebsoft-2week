@@ -10,7 +10,7 @@ import java.io.IOException;
  * Request Encoding을 utf-8로 설정
  */
 @Slf4j
-@WebFilter(urlPatterns = "/")
+@WebFilter(urlPatterns = "/*")
 public class EncodingFilter implements Filter {
 
     @Override

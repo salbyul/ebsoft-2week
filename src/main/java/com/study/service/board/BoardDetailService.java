@@ -1,4 +1,4 @@
-package com.study.service;
+package com.study.service.board;
 
 import com.study.dto.board.BoardDetailDto;
 import com.study.repository.CommentRepository;
@@ -27,13 +27,28 @@ public class BoardDetailService implements BoardService{
         BoardDetailDto boardDetailDto = null;
         CommentRepository commentRepository = new CommentRepository();
         FileRepository fileRepository = new FileRepository();
+        Long index;
 
-        long index = Long.parseLong(optionalIndex.orElse("0"));
-
+        if (optionalIndex.isPresent()) {
+            String s = optionalIndex.get();
+            try {
+                index = Long.parseLong(s);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                nextPath = webUtil.assembleNextPath(request, "404");
+                request.getRequestDispatcher(nextPath).forward(request, response);
+                return;
+            }
+        } else {
+            nextPath = webUtil.assembleNextPath(request, "404");
+            request.getRequestDispatcher(nextPath).forward(request, response);
+            return;
+        }
 
         if (index == 0) {
             nextPath = webUtil.assembleNextPath(request, "/");
             request.getRequestDispatcher(nextPath).forward(request, response);
+            return;
         } else {
             nextPath = webUtil.assembleNextPath(request, "detail.jsp");
         }
@@ -49,7 +64,6 @@ public class BoardDetailService implements BoardService{
         }
 
         request.setAttribute("boardDetailDto", boardDetailDto);
-
         request.getRequestDispatcher(nextPath).forward(request, response);
     }
 }

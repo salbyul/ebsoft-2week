@@ -1,9 +1,7 @@
 package com.study.repository;
 
 import com.study.connection.MyConnection;
-import com.study.dto.board.BoardDetailDto;
-import com.study.dto.board.BoardSaveDto;
-import com.study.dto.board.BoardSearchDto;
+import com.study.dto.board.*;
 import com.study.dto.SearchDto;
 
 import java.sql.*;
@@ -74,9 +72,9 @@ public class BoardRepository {
     //    TODO SQL Injection 대비
     public Integer findCountBySearchDto(SearchDto searchDto) {
 
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        Connection conn;
+        PreparedStatement pstmt;
+        ResultSet rs;
 
         String sql = "select count(b.board_id) " +
                 "from board b, category c " +
@@ -102,7 +100,6 @@ public class BoardRepository {
         return 0;
     }
 
-    //    TODO SQLException 이거 제거 불가?
     public List<String> getCategories() throws SQLException {
         String sql = "select name from category";
         Connection conn = null;
@@ -214,6 +211,132 @@ public class BoardRepository {
             pstmt.setInt(1, views);
             pstmt.setLong(2, boardId);
             int i = pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.close();
+            pstmt.close();
+        }
+    }
+
+    /**
+     * board_id로 비밀번호를 찾는다.
+     *
+     * @param boardId
+     * @return
+     * @throws SQLException
+     */
+    public String findPasswordByBoardId(Long boardId) throws SQLException {
+        String sql = "select password from board where board_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String result = null;
+
+        try {
+            conn = connection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, boardId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                result = rs.getString(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.close();
+            pstmt.close();
+            rs.close();
+        }
+        return result;
+    }
+
+    /**
+     * board_id로 board를 찾은 뒤 BoardModifyDto 객체를 리턴한다.
+     *
+     * @param boardId
+     * @return
+     */
+    public BoardModifyDto findBoardModifyByBoardId(Long boardId) throws SQLException {
+        String sql = "select c.name as category, b.writer, b.title, b.content, b.views, b.created_date, b.modified_date " +
+                "from board b " +
+                "left join category c " +
+                "on b.category_id = c.category_id " +
+                "where b.board_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        BoardModifyDto boardModifyDto = null;
+
+        try {
+            conn = connection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setLong(1, boardId);
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                boardModifyDto = new BoardModifyDto(rs.getString("category"), rs.getString("writer"),
+                        rs.getString("title"), rs.getString("content"), rs.getInt("views"),
+                        rs.getString("created_date"), rs.getString("modified_date"), null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.close();
+            pstmt.close();
+            rs.close();
+        }
+        return boardModifyDto;
+    }
+
+    /**
+     * board_id를 받아 해당 board를 DB에서 삭제한다.
+     * @param boardId
+     * @throws SQLException
+     */
+    public void deleteBoardByBoardId(Long boardId) throws SQLException {
+        String sql = "delete from board where board_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = connection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, boardId);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.close();
+            pstmt.close();
+        }
+    }
+
+    /**
+     * BoardModifySaveDto를 받아서 DB에 있는 해당 레코드를 업데이트한다.
+     * @param boardModifySaveDto
+     */
+    public void updateBoard(BoardModifySaveDto boardModifySaveDto) throws SQLException {
+        String sql = "update board set writer = ?, title = ?, content = ?, modified_date = ? where board_id = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = connection.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, boardModifySaveDto.getWriter());
+            pstmt.setString(2, boardModifySaveDto.getTitle());
+            pstmt.setString(3, boardModifySaveDto.getContent());
+            pstmt.setString(4, String.valueOf(LocalDateTime.now()));
+            pstmt.setLong(5, boardModifySaveDto.getId());
+            pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

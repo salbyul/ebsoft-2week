@@ -1,6 +1,7 @@
 package com.study.servlet;
 
 import com.study.service.*;
+import com.study.service.board.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletException;
@@ -25,6 +26,12 @@ public class MyServlet extends HttpServlet {
         map.put("/create", new BoardCreatePageService());
         map.put("/save", new BoardSaveService());
         map.put("/download", new FileDownloadService());
+        map.put("/comment/save", new CommentSaveService());
+        map.put("/password/check", new CheckPasswordService());
+        map.put("/board/modify/page", new BoardModifyPageService());
+        map.put("/board/delete", new BoardDeleteService());
+        map.put("/board/modify", new BoardModifyService());
+
         log.info("MyServlet INIT");
     }
 
